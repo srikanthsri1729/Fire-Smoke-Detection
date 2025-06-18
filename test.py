@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import os
 import torch
+import requests
 
 # Set page config FIRST
 st.set_page_config(page_title="Fire & Smoke Detection", layout="wide")
@@ -12,7 +13,18 @@ st.set_page_config(page_title="Fire & Smoke Detection", layout="wide")
 # Cache model loading
 @st.cache_resource
 def load_model():
-    model_path = r"C:\Users\P SRIKANTH\Downloads\fire-smoke.pt"
+    model_path = "fire-smoke.pt"
+    if not os.path.exists(model_path):
+        url = st.secrets.get("MODEL_URL", "https://www.dropbox.com/scl/fi/77kd7uonbg1ow65f4p4za/fire-smoke.pt?rlkey=1i9ee9exo3jxarlv7t8z18iby&st=sisacanf&dl=0")  # Replace with valid URL
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            with open(model_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+        except Exception as e:
+            st.error(f"Error downloading model: {e}")
+            st.stop()
     if not os.path.exists(model_path):
         st.error(f"Model file not found at {model_path}")
         st.stop()
