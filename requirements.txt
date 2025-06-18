@@ -1,0 +1,12 @@
+streamlit
+ultralytics
+pillow
+numpy
+opencv-python
+torch
+torchvision
+torchvision
+pil
+os
+cv2
+requests
